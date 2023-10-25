@@ -432,24 +432,25 @@ chosen a uniform prior over all possible dispositions for both of them.
   that was more natural to implement in this framework. To make a decision, the
   agent first considers each possible action in turn. For that action, she:
 
-      1. Computes the probability distribution over the current event, under
-         the assumption that she precommited to picking this action from the
-         start of the scenario.
-      2. Normalize this probability distribution so that the probabilities sum
-         to 1 (again, they could have summed to less than or more than 1).
-      3. Compute the expected utility from this point forward, assuming that
-         the agent continues to commit to making this decision the same way.
+     1. Computes the probability distribution over the current event, under
+        the assumption that she precommited to picking this action from the
+        start of the scenario.
+     2. Normalize this probability distribution so that the probabilities sum
+        to 1 (again, they could have summed to less than or more than 1).
+     3. Compute the expected utility from this point forward, assuming that
+        the agent continues to commit to making this decision the same way.
   Then just pick the action with the highest expected utility.
 - _EDT, evidential decision theory._ 
-        1. Determine a probability distribution over the current event. Do so by
-           starting with a uniform prior over all possible behaviors for all
-           agents, and simulating forward from there until reaching the current
-           decision.
-        2. Re-group the probability distribution based on action.
-        3. Normalize this probability distribution so that the probabilities sum
-           to 1.
-        4. For each action, compute the expected utility from this point forward,
-           assuming that all agents continue to behave the same way.
+
+     1. Determine a probability distribution over the current event. Do so by
+        starting with a uniform prior over all possible behaviors for all
+        agents, and simulating forward from there until reaching the current
+        decision.
+     2. Re-group the probability distribution based on action.
+     3. Normalize this probability distribution so that the probabilities sum
+        to 1.
+     4. For each action, compute the expected utility from this point forward,
+        assuming that all agents continue to behave the same way.
   Then pick the action with the highest utility.
 - _UDT, updateless decision theory._ Make each decision the way you would have
   precommited to make it at the start of the scenario. To be more precise, for
