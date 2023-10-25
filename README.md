@@ -431,6 +431,7 @@ chosen a uniform prior over all possible dispositions for both of them.
 - _EPDT, evidential precommitment decision theory._ This is a variant of EDT
   that was more natural to implement in this framework. To make a decision, the
   agent first considers each possible action in turn. For that action, she:
+
       1. Computes the probability distribution over the current event, under
          the assumption that she precommited to picking this action from the
          start of the scenario.
@@ -440,15 +441,15 @@ chosen a uniform prior over all possible dispositions for both of them.
          the agent continues to commit to making this decision the same way.
   Then just pick the action with the highest expected utility.
 - _EDT, evidential decision theory._ 
-      1. Determine a probability distribution over the current event. Do so by
-         starting with a uniform prior over all possible behaviors for all
-         agents, and simulating forward from there until reaching the current
-         decision.
-      2. Re-group the probability distribution based on action.
-      3. Normalize this probability distribution so that the probabilities sum
-         to 1.
-      4. For each action, compute the expected utility from this point forward,
-         assuming that all agents continue to behave the same way.
+        1. Determine a probability distribution over the current event. Do so by
+           starting with a uniform prior over all possible behaviors for all
+           agents, and simulating forward from there until reaching the current
+           decision.
+        2. Re-group the probability distribution based on action.
+        3. Normalize this probability distribution so that the probabilities sum
+           to 1.
+        4. For each action, compute the expected utility from this point forward,
+           assuming that all agents continue to behave the same way.
   Then pick the action with the highest utility.
 - _UDT, updateless decision theory._ Make each decision the way you would have
   precommited to make it at the start of the scenario. To be more precise, for
@@ -461,9 +462,8 @@ chosen a uniform prior over all possible dispositions for both of them.
   be named differently, let me know. (If I were to name it from scratch, I
   would call it "precommitment decision theory".)
 
-(A few of these descriptions used the word "behavior". I used it to mean a
-_complete_ mapping from decision to action, which fixes all decisions made by
-an agent.)
+(A few of these descriptions used the word "behavior". It means a _complete_
+mapping from decision to action, which fixes all decisions made by an agent.)
 
 ## Logging
 
@@ -471,7 +471,15 @@ When you run a dilemma using a decision theory, you get a very detailed log of
 what's happening, and what the agent's reasoning process is. For example,
 here's "UDT" on a version of the Newcomb problem where the predictor is
 infallible (it's the same as the one we've walked through, except for missing
-the two 1% random cases where the predictor makes a mistake):
+the two 1% random cases where the predictor makes a mistake).
+
+The vertical lines give context:
+
+- `|` marks simulations. The outer `|` is what's actually happening; inner ones
+  are from agents simulating hypotheticals in their minds (or, perhaps, on
+  paper).
+- `?` marks the predictor predicting what an agent _would_ do.
+- `!` marks agents actually reasoning to make a decision.
 
 ```
 SIMULATE prediction
@@ -566,14 +574,6 @@ Final outcome:
     Alice -> 1,000,000
 ```
 
-The vertical lines give context:
-
-- `|` marks simulations. The outer `|` is what's actually happening; inner ones
-  are from agents simulating hypotheticals in their minds (or, perhaps, on
-  paper).
-- `?` marks the predictor predicting what an agent _would_ do.
-- `!` marks agents actually reasoning to make a decision.
-
 ## Dilemma Catalog
 
 TODO
@@ -581,6 +581,8 @@ TODO
 Current issues:
 
 - CDT infinite loops on prisoner's dilemma
+- I'm not fully confident in EDT; need to do some probability theory to
+  prove/check it.
 
 ## Usage
 
