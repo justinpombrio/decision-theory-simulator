@@ -36,7 +36,7 @@ class UDT:
                 decision_proc = theory.decide
                 start_event = scenario.events[scenario.start_event]
                 with self.logger.group(f"with precommitment '{agent_name}, {decision_name} -> {action}':"):
-                    outcome = sim.simulate(decision_proc, decision_proc, scenario, start_event)
+                    outcome = sim.simulate_to_outcome(decision_proc, decision_proc, scenario, start_event)
                 action_to_utility[action] = outcome[agent_name]
 
         with self.logger.group(f"Expected utility for each precommitment:"):

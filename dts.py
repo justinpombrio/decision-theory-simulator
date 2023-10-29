@@ -57,7 +57,7 @@ if __name__ == '__main__':
         predict = theory.decide # predictors are accurate
         sim = Simulator(logger)
         start_event = dilemma.scenario.events[dilemma.scenario.start_event]
-        outcome = sim.simulate(decide, predict, dilemma.scenario, start_event)
+        outcome = sim.simulate_to_outcome(decide, predict, dilemma.scenario, start_event)
         with logger.group(f"Final outcome:"):
             for agent, utility in outcome.items():
                 logger.log(f"{agent} -> {utility:,}")

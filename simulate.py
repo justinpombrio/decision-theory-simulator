@@ -10,7 +10,22 @@ class Simulator:
     def __init__(self, logger):
         self.logger = logger
 
-    def simulate(self, decide, predict, scenario, event, stop=None):
+    def simulate_to_outcome(self, decide, predict, scenario, event):
+        """
+        `simulate` until reaching `outcome` events, then return the weighted
+        average of those outcomes, as a map from agent name to utility.
+        """
+        stop = lambda event: event.label == "outcome"
+        outcomes = self.simulate(decide, predict, scenario, event, stop)
+        expected_utilities = {}
+        for outcome, prob in outcomes.items():
+            for agent, utility in outcome.utilities.items():
+                if agent not in expected_utilities:
+                    expected_utilities[agent] = Decimal(0.0)
+                expected_utilities[agent] += prob * utility
+        return expected_utilities
+
+    def simulate(self, decide, predict, scenario, event, stop):
         """
         Simulate `event` within `scenario`, in which decisions are made via the
         `decide` procedure and predictions are made via the `predict`
@@ -23,24 +38,26 @@ class Simulator:
         - `decide`: a function that determines how agents make decisions. It
           takes as arguments:
               Scenario, agent_name, decision_name, Simulator
-          and returns either the action to take (`str`), or a probability
-          distribution over actions (`{str: float}`). The `Simulator` argument
+          and returns the action to take (`str`). The `Simulator` argument
           allows the decision theory to recursively call this simulation method.
           However, watch out for infinite loops!
         - `predict`: a function that determines what agents are predicted to
-          do. Accepts the same type signatures as `decide`.
-        - If `stop` is None, returns `{ agent_name : expected_utility }`
-          (a map from agent name to expected utility for that agent).
-        - If `stop` is a `event -> bool`, returns `{ event : probability }`
-          (a map from event object to probability that that event occurs).
-          Note that the probabilities for events might add up to less than or
-          more than 1.
+          do. Has the same type signatures as `decide`.
+        - `stop` is a predicate over events, saying which events to return.
+
+        Returns a probability distribution over events for which the `stop`
+        predicate returns true. `{Event : prob}`
+
+        Formally, returns a probability distribution over events `e` for which
+        `stop(e)` returns true, where the probability of event `e` is:
+
+             P(e | event decide predict)
         """
         with self.logger.group(f"SIMULATE {event.id}", "|"):
             result = self.__sim(decide, predict, scenario, event, stop)
         return result
 
-    def simulate_with_distribution(self, distribution, scenario, event, stop=None):
+    def simulate_with_distribution(self, distribution, scenario, event, stop):
         """
         distribution: [(prob, decide, predict, name)]
 
@@ -57,7 +74,7 @@ class Simulator:
                     expected_outcome[key] += prob * val
         return expected_outcome
 
-    def __sim(self, decide, predict, scenario, event, stop=None):
+    def __sim(self, decide, predict, scenario, event, stop):
 
         if event.label == "goto":
             # TODO: cycle detection
@@ -74,10 +91,6 @@ class Simulator:
                         for key, val in conditional_outcome.items():
                             outcome.setdefault(key, Decimal(0.0))
                             outcome[key] += prob * val
-                if stop is None:
-                    with self.logger.group("Average outcome:"):
-                        for agent, utility in outcome.items():
-                            self.logger.log(f"{agent} -> {utility:,}")
 
         elif event.label == "predict":
             new_scenario = Scenario(
@@ -115,15 +128,12 @@ class Simulator:
             with self.logger.group("OUTCOME:"):
                 for agent, utility in event.utilities.items():
                     self.logger.log(f"{agent} -> {utility:,}")
-                if stop is None:
-                    outcome = event.utilities
-                else:
                     outcome = {}
 
         else:
             raise Exception(f"Bug! Invalid label '{label}'")
 
-        if stop is not None and stop(event):
+        if stop(event):
             outcome.setdefault(event, Decimal(0.0))
             outcome[event] += Decimal(1.0)
             self.logger.log(f"Yielding event {event.id}.")

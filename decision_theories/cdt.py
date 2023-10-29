@@ -43,7 +43,7 @@ class CDT:
                         for event, prob in normal_distr.items():
                             with self.logger.group(f"for possibility {event.id}:"):
                                 event_from_action = event.cases[action]
-                                outcome = sim.simulate(self.decide, self.decide, scenario, event_from_action)
+                                outcome = sim.simulate_to_outcome(self.decide, self.decide, scenario, event_from_action)
                                 expected_utility += prob * outcome[agent_name]
                         self.logger.log(f"Total expected utility: {expected_utility}")
                         action_to_utility[action] = expected_utility

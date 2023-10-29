@@ -77,7 +77,7 @@ class EDT:
             for action, bot_to_distr in action_to_bot_to_normalized_distr.items():
                 for bot, distr in bot_to_distr.items():
                     for event, prob in distr.items():
-                        outcome = sim.simulate(bot.decide, bot.decide, scenario, event)
+                        outcome = sim.simulate_to_outcome(bot.decide, bot.decide, scenario, event)
                         action_to_utility.setdefault(action, Decimal(0.0))
                         action_to_utility[action] += outcome[agent_name] * prob
 

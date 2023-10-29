@@ -58,7 +58,7 @@ class EPDT:
                         expected_utility = Decimal(0.0)
                         for event, prob in normal_distr.items():
                             with self.logger.group(f"Considering possibility {event.id}:"):
-                                outcome = sim.simulate(decision_proc, decision_proc, scenario, event)
+                                outcome = sim.simulate_to_outcome(decision_proc, decision_proc, scenario, event)
                                 expected_utility += prob * outcome[agent_name]
                         self.logger.log(f"Total expected utility: {expected_utility}")
                         action_to_utility[action] = expected_utility
