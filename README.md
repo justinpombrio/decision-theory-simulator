@@ -466,6 +466,9 @@ chosen a uniform prior over all possible dispositions for both of them.
 (A few of these descriptions used the word "behavior". It means a _complete_
 mapping from decision to action, which fixes all decisions made by an agent.)
 
+There's a mostly-complete proof that the implementation of EDT does the correct
+thing in [PROOFS.md](PROOFS.md).
+
 ## Logging
 
 When you run a dilemma using a decision theory, you get a very detailed log of

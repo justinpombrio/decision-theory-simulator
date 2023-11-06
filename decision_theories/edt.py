@@ -13,6 +13,8 @@ class EDT:
 
         self.logger.log(f"I, {agent_name}, am deciding {decision_name} using EDT.")
 
+        # b -> e1 -> P(e1 | e0 b)
+        # (See PROOFS.md for what these variables mean.)
         bot_to_distr = {}
         with self.logger.group(f"Using prior to compute distribution over current event:"):
             bots = PrecommitmentBot.all_possible_bots(self.logger, scenario.decision_table)
@@ -26,6 +28,7 @@ class EDT:
                     distr = sim.simulate(bot.decide, bot.decide, scenario, start_event, stop)
                     bot_to_distr[bot] = distr
 
+        # a -> b -> e1' -> P(e1' | e0 b a)
         action_to_bot_to_distr = {}
         def add_case(action, bot, event, prob):
             action_to_bot_to_distr.setdefault(action, {})
@@ -49,6 +52,7 @@ class EDT:
                             for event, prob in distr.items():
                                 self.logger.log(f"{event.id} -> {prob}")
 
+        # a -> b -> e1' -> P(e1' | e0 b a) / Sum_{b, e1'} P(e1' | e0 b a)
         action_to_bot_to_normalized_distr = {}
         for action, bot_to_distr in action_to_bot_to_distr.items():
             total_prob = Decimal(0.0)
@@ -71,7 +75,10 @@ class EDT:
                         with self.logger.group(f"with precommitment {bot.description()}:"):
                             for event, prob in distr.items():
                                 self.logger.log(f"{event.id} -> {prob}")
-        
+
+        # a -> Sum_{b, e1', e2} U(e2) * P(e2 | e1' b) * P(e1' | e0 b a) / Sum_{b, e1'} P(e1' | e0 b a)
+        # (Not _exactly_ what the proof says, but maybe correct? Formalism
+        # needs to be more formal to tell which things are equivalent.)
         action_to_utility = {}
         with self.logger.group(f"Computing expected utility given each action:"):
             for action, bot_to_distr in action_to_bot_to_normalized_distr.items():
