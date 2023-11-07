@@ -1,5 +1,7 @@
 # Decision Theory Simulator
 
+**This is a _work in progress_. Expect some bugs.**
+
 This is an XML language that can express common decision theory dilemmas, and a
 Python simulator that can run a decision theory on a dilemma.
 
